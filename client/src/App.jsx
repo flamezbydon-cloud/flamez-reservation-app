@@ -204,7 +204,7 @@ export default function App() {
                         <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> 12:00 PM – 8:00 PM Slots
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Instant SMS Confirmation
+                        <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Instant Email Confirmation
                       </span>
                     </div>
                   </div>
@@ -311,20 +311,6 @@ export default function App() {
         }}
       />
 
-      {/* Virtual Smartphone SMS Drawer */}
-      <SMSDrawer
-        isOpen={smsDrawerOpen}
-        onClose={() => setSmsDrawerOpen(false)}
-        activePhone={confirmedReservation?.phone || '+60 12 371 1491'}
-        onMessageReceived={() => setSmsUnreadCount(prev => prev + 1)}
-      />
-
-      {/* Twilio API Settings Modal */}
-      <TwilioConfigModal
-        isOpen={twilioModalOpen}
-        onClose={() => setTwilioModalOpen(false)}
-      />
-
       {/* Staff Authentication PIN Modal */}
       <StaffAuthModal
         isOpen={isStaffAuthModalOpen}
@@ -342,19 +328,21 @@ export default function App() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => { setSmsDrawerOpen(true); setSmsUnreadCount(0); }}
-              className="text-emerald-400 hover:underline flex items-center gap-1"
+            <a
+              href="mailto:flamezbydonreservation@gmail.com"
+              className="text-amber-400 hover:underline flex items-center gap-1"
             >
-              <MessageSquare className="w-3.5 h-3.5" /> Virtual Phone SMS Tester
-            </button>
+              flamezbydonreservation@gmail.com
+            </a>
             <span>•</span>
-            <button
-              onClick={() => setTwilioModalOpen(true)}
-              className="hover:text-amber-300"
+            <a
+              href="https://wa.me/60123711491"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:underline"
             >
-              Twilio API Settings
-            </button>
+              WhatsApp Support
+            </a>
           </div>
         </div>
       </footer>

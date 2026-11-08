@@ -138,7 +138,12 @@ export default function BookingModal({
 
     const rawDigits = phone.replace(/\D/g, '');
     if (!phone.trim() || rawDigits.length < 7) {
-      setError('Please enter a valid mobile phone number including your country code (e.g. +60 for Malaysia, +65, +44, +1, etc.) for SMS confirmation.');
+      setError('Please enter a valid mobile phone number including your country code (e.g. +60 for Malaysia, +65, +44, +1, etc.).');
+      return;
+    }
+
+    if (!email.trim() || !email.includes('@')) {
+      setError('Please provide a valid email address to receive your booking confirmation.');
       return;
     }
 
@@ -163,10 +168,7 @@ export default function BookingModal({
         sendSms
       });
 
-      onBookingConfirmed(response.reservation, response.smsResult);
-      if (sendSms && onOpenSmsDrawer) {
-        onOpenSmsDrawer();
-      }
+      onBookingConfirmed(response.reservation, response.emailResult);
     } catch (err) {
       setError(err.message || 'Failed to book reservation. Please try another slot or table.');
     } finally {
@@ -354,14 +356,18 @@ export default function BookingModal({
             )}
           </div>
 
-          {/* Email Address */}
+          {/* Email Address - Required for Email Confirmation */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-amber-400" /> Email Address (Optional)
+            <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-amber-400" /> Email Address <span className="text-amber-400 font-bold">*</span>
+              </span>
+              <span className="text-[11px] text-emerald-400 font-medium">Instant Confirmation Sent Here</span>
             </label>
             <input
               type="email"
-              placeholder="e.g. guest@example.com"
+              required
+              placeholder="e.g. yourname@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl bg-noir-800 border border-white/10 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white placeholder-slate-500 text-sm outline-none transition-all"
@@ -400,33 +406,12 @@ export default function BookingModal({
             </div>
           </div>
 
-          {/* SMS Notification & OTP Options */}
-          <div className="pt-2 space-y-2 border-t border-white/10">
-            <label className="flex items-center gap-2.5 cursor-pointer text-xs text-slate-200">
-              <input
-                type="checkbox"
-                checked={sendSms}
-                onChange={(e) => setSendSms(e.target.checked)}
-                className="w-4 h-4 rounded text-amber-500 bg-noir-800 border-white/20 focus:ring-amber-400"
-              />
-              <span className="flex items-center gap-1.5 font-medium">
-                <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-                Send instant SMS confirmation & mobile pass
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2.5 cursor-pointer text-xs text-slate-400">
-              <input
-                type="checkbox"
-                checked={requireOtp}
-                onChange={(e) => {
-                  setRequireOtp(e.target.checked);
-                  if (!e.target.checked) setIsPhoneVerified(false);
-                }}
-                className="w-4 h-4 rounded text-amber-500 bg-noir-800 border-white/20 focus:ring-amber-400"
-              />
-              <span>Verify phone number with 6-digit SMS code before finalizing</span>
-            </label>
+          {/* Email Confirmation Notice */}
+          <div className="pt-3 border-t border-white/10">
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2.5 text-xs text-emerald-300">
+              <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>A booking confirmation will be sent directly to your email address and to Flamez by Don.</span>
+            </div>
           </div>
 
           {/* Action Buttons */}

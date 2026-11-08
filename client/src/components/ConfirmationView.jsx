@@ -264,48 +264,27 @@ export default function ConfirmationView({
           </div>
         )}
 
-        {/* SMS Status Banner */}
+        {/* Email Status Banner */}
         <div className="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
-              <MessageSquare className="w-5 h-5" />
+            <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400">
+              <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-emerald-300">
-                  SMS Confirmation Delivered
+                  Email Confirmation Dispatched
                 </span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold">
-                  {smsResult?.provider || 'Live SMS Gateway'}
+                  Delivered to Both Parties
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 mt-0.5">
-                Sent to {reservation?.phone}. Contains booking pass & direct cancel shortcut.
+                Sent to <strong className="text-white">{reservation?.email}</strong> and restaurant team (<strong className="text-white">flamezbydonreservation@gmail.com</strong>).
               </p>
             </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onOpenSmsDrawer}
-              className="px-3.5 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-semibold transition-all whitespace-nowrap"
-            >
-              Open Virtual Phone 📱
-            </button>
-            <button
-              onClick={handleResendSms}
-              disabled={resendingSms}
-              className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all"
-              title="Resend Confirmation SMS"
-            >
-              <RefreshCw className={`w-4 h-4 ${resendingSms ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
         </div>
-
-        {smsResentMessage && (
-          <p className="text-xs text-emerald-400 text-center mt-2">{smsResentMessage}</p>
-        )}
 
         {/* Calendar Add & Download Buttons */}
         <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">

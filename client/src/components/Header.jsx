@@ -92,34 +92,18 @@ export default function Header({
             </button>
           </nav>
 
-          {/* Right Action Buttons: SMS Simulator Drawer & Twilio Settings */}
+          {/* Right Action: Direct WhatsApp / Call Shortcut */}
           <div className="flex items-center gap-2">
-            
-            {/* SMS Simulator Button with Unread Badge */}
-            <button
-              onClick={() => setSmsDrawerOpen(!smsDrawerOpen)}
-              className="relative flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl bg-noir-800 hover:bg-noir-700 text-slate-200 border border-white/10 hover:border-amber-500/50 transition-all group"
-              title="Open Virtual Smartphone SMS Drawer"
+            <a
+              href="https://wa.me/60123711491?text=Hi%20Flamez%20by%20Don%2C%20I%20have%20an%20inquiry%20regarding%20a%20table%20reservation."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition-all"
+              title="Chat with Flamez by Don on WhatsApp"
             >
-              <div className="relative">
-                <MessageSquare className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
-                {smsUnreadCount > 0 && (
-                  <span className="absolute -top-2 -right-2 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-noir-950 animate-pulse">
-                    {smsUnreadCount}
-                  </span>
-                )}
-              </div>
-              <span className="text-xs font-medium hidden lg:inline">SMS Simulator</span>
-            </button>
-
-            {/* Twilio Settings */}
-            <button
-              onClick={onOpenTwilioSettings}
-              className="p-2.5 rounded-xl bg-noir-800 hover:bg-noir-700 text-slate-300 hover:text-amber-300 border border-white/10 hover:border-amber-500/50 transition-all"
-              title="Twilio SMS API Configuration"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
+              <Phone className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </a>
           </div>
 
         </div>

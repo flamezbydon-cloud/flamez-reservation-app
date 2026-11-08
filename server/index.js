@@ -5,6 +5,7 @@ const fs = require('fs');
 
 const db = require('./db');
 const smsService = require('./smsService');
+const emailService = require('./emailService');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -262,23 +263,22 @@ app.post('/api/reservations', async (req, res) => {
       occasion,
       notes: notes || specialRequests || '',
       specialRequests: notes || specialRequests || '',
-      smsNotifications: sendSms
+      smsNotifications: false
     });
 
-    let smsResult = null;
-    if (sendSms) {
-      try {
-        smsResult = await smsService.sendBookingConfirmationSms(reservation);
-      } catch (smsErr) {
-        console.error('Failed to dispatch SMS confirmation:', smsErr.message);
-      }
+    // Send email confirmation to both Customer and Restaurant
+    let emailResult = null;
+    try {
+      emailResult = await emailService.sendBookingConfirmationEmail(reservation);
+    } catch (emailErr) {
+      console.error('Failed to dispatch email confirmation:', emailErr.message);
     }
 
     res.status(201).json({
       success: true,
       reservation,
-      smsResult,
-      message: 'Reservation confirmed successfully!'
+      emailResult,
+      message: 'Reservation confirmed! Confirmation sent via email.'
     });
   } catch (err) {
     console.error('Reservation creation failed:', err.message);
