@@ -1,0 +1,74 @@
+[
+  {
+    "id": "sms_1793543523009_883",
+    "timestamp": "2026-11-01T14:32:03.009Z",
+    "status": "Delivered",
+    "reservationId": "res_1793543481325_306",
+    "to": "+60 12 345 6789",
+    "recipientName": "Tourist Test",
+    "type": "CANCELLATION",
+    "message": "Flamez by Don: Reservation #FLZ-JUMP for 2 guests on Wed, Nov 4, 2026 at 6:00 PM has been CANCELLED (Cancelled by guest). We hope to welcome you another time!",
+    "provider": "Simulator",
+    "twilioSid": null,
+    "twilioError": null
+  },
+  {
+    "id": "sms_1793543481366_347",
+    "timestamp": "2026-11-01T14:31:21.366Z",
+    "status": "Delivered",
+    "reservationId": "res_1793543481325_306",
+    "to": "+60 12 345 6789",
+    "recipientName": "Tourist Test",
+    "type": "CONFIRMATION",
+    "message": "Flamez by Don: Your reservation for 2 on Wed, Nov 4, 2026 at 6:00 PM (Left Table 2 (2-Seater) - Left Section) is CONFIRMED! Code: #FLZ-JUMP. Kitchen last call is 8:30 PM. Reply CANCEL to cancel or call (+60) 12 371 1491.",
+    "provider": "Simulator",
+    "twilioSid": null,
+    "twilioError": null
+  },
+  {
+    "id": "sms_1792937053741_989",
+    "timestamp": "2026-10-25T14:04:13.741Z",
+    "status": "Delivered",
+    "reservationId": "res_1792937053733_657",
+    "to": "+1 (555) 888-9999",
+    "recipientName": "Gordon Ramsay",
+    "type": "CONFIRMATION",
+    "message": "Flamez by Don: Your reservation for 4 on Mon, Oct 26, 2026 at 7:00 PM (Center Table 1 - Center Section) is CONFIRMED! Code: #FLZ-XN9B. Kitchen last call is 8:30 PM. Reply CANCEL to cancel or call +1 (555) 792-3526.",
+    "provider": "Simulator",
+    "twilioSid": null,
+    "twilioError": null
+  },
+  {
+    "id": "sms_log_201",
+    "reservationId": "res_2001",
+    "to": "+1 (555) 234-8901",
+    "recipientName": "Elena Vance",
+    "type": "CONFIRMATION",
+    "message": "Flamez by Don: Your reservation for 4 on Monday, Oct 26 at 6:30 PM (Left Table 1 - Left Section) is CONFIRMED! Code: #FLZ-8421. Kitchen last call is 8:30 PM. Reply CANCEL to cancel or call (555) 792-3526.",
+    "status": "Delivered",
+    "timestamp": "2026-10-24T14:30:05.000Z",
+    "provider": "Simulator"
+  },
+  {
+    "id": "sms_log_202",
+    "reservationId": "res_2002",
+    "to": "+1 (555) 782-4411",
+    "recipientName": "Marcus Sterling",
+    "type": "CONFIRMATION",
+    "message": "Flamez by Don: Your reservation for 4 on Monday, Oct 26 at 7:00 PM (Center Table 2 - Center Section) is CONFIRMED! Code: #FLZ-9154. Kitchen last call is 8:30 PM. Reply CANCEL to cancel or call (555) 792-3526.",
+    "status": "Delivered",
+    "timestamp": "2026-10-25T09:15:04.000Z",
+    "provider": "Simulator"
+  },
+  {
+    "id": "sms_log_203",
+    "reservationId": "res_2003",
+    "to": "+1 (555) 901-3329",
+    "recipientName": "Dr. Sophia Chen",
+    "type": "CONFIRMATION",
+    "message": "Flamez by Don: Your reservation for 8 on Monday, Oct 26 at 7:30 PM (Right Table 1 (8-Seater) - Right Section) is CONFIRMED! Code: #FLZ-6320. Kitchen last call is 8:30 PM. Reply CANCEL to cancel or call (555) 792-3526.",
+    "status": "Delivered",
+    "timestamp": "2026-10-24T11:00:03.000Z",
+    "provider": "Simulator"
+  }
+]

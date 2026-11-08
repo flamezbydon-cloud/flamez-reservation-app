@@ -1,0 +1,30 @@
+{
+  "name": "restaurant-reservation-app",
+  "version": "1.0.0",
+  "description": "Full-stack restaurant reservation app with interactive calendar, table availability selector, and SMS confirmation.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev:server": "node --watch server/index.js",
+    "dev:client": "vite client --host",
+    "build:client": "vite build client",
+    "dev": "node server/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "canvas-confetti": "^1.9.3",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.453.0",
+    "postcss": "^8.4.47",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.10"
+  }
+}

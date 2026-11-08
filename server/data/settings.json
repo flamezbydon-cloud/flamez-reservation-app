@@ -1,0 +1,26 @@
+{
+  "restaurantName": "Flamez by Don Western Restaurant",
+  "shortName": "Flamez by Don",
+  "tagline": "Western Restaurant - Owner & Head Chef DJ Don",
+  "address": "Flamez by Don, Western Cuisine & Grill",
+  "phone": "(+60) 12 371 1491",
+  "email": "reserve@flamezbydon.com",
+  "operatingHours": {
+    "days": "Monday to Saturday (Sundays Off)",
+    "openTime": "12:00",
+    "closeTime": "21:00",
+    "kitchenLastCall": "20:30",
+    "slotIntervalMin": 30,
+    "lastBookingSlot": "20:00"
+  },
+  "reservationDurationMinutes": 90,
+  "maxAdvanceDays": 60,
+  "closedDays": [0],
+  "staffPasscode": "1149",
+  "twilio": {
+    "enabled": false,
+    "accountSid": "",
+    "authToken": "",
+    "fromPhone": ""
+  }
+}
