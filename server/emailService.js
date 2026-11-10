@@ -7,12 +7,18 @@ const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || '';
 
 // Create transporter if password provided, otherwise use console logger
 function getTransporter() {
-  if (GMAIL_APP_PASSWORD) {
+  const pass = process.env.GMAIL_APP_PASSWORD || GMAIL_APP_PASSWORD;
+  const user = process.env.GMAIL_USER || GMAIL_USER;
+  if (pass) {
+    // Strip any accidental spaces or quotes user might have entered
+    const cleanPass = pass.replace(/\s+/g, '').replace(/["']/g, '');
     return nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: GMAIL_USER,
-        pass: GMAIL_APP_PASSWORD
+        user: user.trim(),
+        pass: cleanPass
       }
     });
   }
@@ -195,11 +201,11 @@ async function sendBookingConfirmationEmail(reservation) {
     }
 
     try {
-      const results = await Promise.allSettled(promises);
-      console.log(`[Email] Dispatched reservation emails for #${reservation.confirmationCode}`, results);
+      const results = await Promise.all(promises);
+      console.log(`[Email] Successfully delivered reservation emails for #${reservation.confirmationCode}:`, results.map(r => r.messageId));
       return { success: true, mode: 'smtp' };
     } catch (err) {
-      console.error('[Email] Failed to send via SMTP:', err.message);
+      console.error('[Email] SMTP Error when sending via Gmail:', err);
       return { success: false, error: err.message };
     }
   } else {
