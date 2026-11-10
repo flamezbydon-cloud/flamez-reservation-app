@@ -266,20 +266,17 @@ app.post('/api/reservations', async (req, res) => {
       smsNotifications: false
     });
 
-    // Send email confirmation to both Customer and Restaurant
-    let emailResult = null;
-    try {
-      emailResult = await emailService.sendBookingConfirmationEmail(reservation);
-    } catch (emailErr) {
-      console.error('Failed to dispatch email confirmation:', emailErr.message);
-    }
-
+    // Respond immediately to the customer (< 0.5s) so they never have to wait
     res.status(201).json({
       success: true,
       reservation,
-      emailResult,
-      message: 'Reservation confirmed! Confirmation sent via email.'
+      message: 'Reservation confirmed! Confirmation email is on its way.'
     });
+
+    // Send email confirmation asynchronously in the background
+    emailService.sendBookingConfirmationEmail(reservation)
+      .then(res => console.log('[Email Background Result]:', res))
+      .catch(err => console.error('[Email Background Error]:', err.message));
   } catch (err) {
     console.error('Reservation creation failed:', err.message);
     res.status(400).json({ success: false, error: err.message });

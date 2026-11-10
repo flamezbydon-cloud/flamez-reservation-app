@@ -10,16 +10,16 @@ function getTransporter() {
   const pass = process.env.GMAIL_APP_PASSWORD || GMAIL_APP_PASSWORD;
   const user = process.env.GMAIL_USER || GMAIL_USER;
   if (pass) {
-    // Strip any accidental spaces or quotes user might have entered
     const cleanPass = pass.replace(/\s+/g, '').replace(/["']/g, '');
     return nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
+      service: 'gmail',
       auth: {
         user: user.trim(),
         pass: cleanPass
-      }
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000
     });
   }
   return null;
