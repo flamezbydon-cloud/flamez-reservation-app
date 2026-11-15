@@ -1,29 +1,11 @@
+const { Resend } = require('resend');
 const nodemailer = require('nodemailer');
 const db = require('./db');
 
 const RESTAURANT_EMAIL = process.env.FLAMEZ_RESTAURANT_EMAIL || 'flamezbydonreservation@gmail.com';
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const GMAIL_USER = process.env.GMAIL_USER || 'flamezbydonreservation@gmail.com';
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || '';
-
-// Create transporter if password provided, otherwise use console logger
-function getTransporter() {
-  const pass = process.env.GMAIL_APP_PASSWORD || GMAIL_APP_PASSWORD;
-  const user = process.env.GMAIL_USER || GMAIL_USER;
-  if (pass) {
-    const cleanPass = pass.replace(/\s+/g, '').replace(/["']/g, '');
-    return nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: user.trim(),
-        pass: cleanPass
-      },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000
-    });
-  }
-  return null;
-}
 
 function formatDateNice(dateStr) {
   try {
@@ -58,7 +40,7 @@ async function sendBookingConfirmationEmail(reservation) {
   const restaurantName = settings.restaurantName || 'Flamez by Don Western Restaurant';
   const phone = settings.phone || '(+60) 12 371 1491';
 
-  // 1. Email HTML for Customer
+  // 1. Customer HTML
   const customerHtml = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0d13; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
       <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%); padding: 32px 24px; text-align: center;">
@@ -68,7 +50,7 @@ async function sendBookingConfirmationEmail(reservation) {
 
       <div style="padding: 32px 24px;">
         <p style="font-size: 16px; color: #ffffff; margin-top: 0;">Dear <strong>${reservation.guestName}</strong>,</p>
-        <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6;">Thank you for reserving a table with us. We are looking forward to serving you our travel-inspired Western cuisine crafted by Chef DJ Don!</p>
+        <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6;">Thank you for reserving a table with us. We look forward to welcoming you for Chef DJ Don's travel-inspired Western cuisine!</p>
 
         <div style="background-color: #151824; border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid rgba(255,255,255,0.08);">
           <div style="text-align: center; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08);">
@@ -110,7 +92,7 @@ async function sendBookingConfirmationEmail(reservation) {
         </div>
 
         <p style="font-size: 13px; color: #94a3b8; line-height: 1.5; margin: 0;">
-          Need to make changes or have questions? Contact us directly via WhatsApp or Phone at <strong style="color: #ffffff;">${phone}</strong> or email <a href="mailto:${RESTAURANT_EMAIL}" style="color: #f59e0b;">${RESTAURANT_EMAIL}</a>.
+          Need changes or have questions? Contact us via WhatsApp or Phone at <strong style="color: #ffffff;">${phone}</strong> or email <a href="mailto:${RESTAURANT_EMAIL}" style="color: #f59e0b;">${RESTAURANT_EMAIL}</a>.
         </p>
       </div>
 
@@ -120,7 +102,7 @@ async function sendBookingConfirmationEmail(reservation) {
     </div>
   `;
 
-  // 2. Email HTML for Flamez Restaurant Management
+  // 2. Restaurant Team HTML
   const restaurantHtml = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0f172a; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
       <div style="background-color: #1e293b; padding: 24px; border-bottom: 2px solid #f59e0b;">
@@ -129,8 +111,6 @@ async function sendBookingConfirmationEmail(reservation) {
       </div>
 
       <div style="padding: 24px; font-size: 14px; line-height: 1.6;">
-        <p style="margin-top: 0; color: #cbd5e1;">A customer has just completed a reservation on the website:</p>
-
         <table style="width: 100%; border-collapse: collapse; margin: 16px 0; background-color: #0b1120; border-radius: 8px; padding: 12px;">
           <tr>
             <td style="padding: 8px 12px; color: #94a3b8;">Guest Name:</td>
@@ -173,53 +153,85 @@ async function sendBookingConfirmationEmail(reservation) {
     </div>
   `;
 
-  const transporter = getTransporter();
+  const resendKey = process.env.RESEND_API_KEY || RESEND_API_KEY;
 
-  if (transporter) {
-    const promises = [];
+  // PRIORITY 1: Resend HTTP API (Fastest, works 100% on Render over HTTPS port 443)
+  if (resendKey) {
+    try {
+      const resend = new Resend(resendKey.trim());
+      const fromSender = process.env.RESEND_FROM || 'Flamez by Don <onboarding@resend.dev>';
 
-    // Send to Restaurant
-    promises.push(
-      transporter.sendMail({
-        from: `"${restaurantName}" <${GMAIL_USER}>`,
+      // Send to restaurant
+      await resend.emails.send({
+        from: fromSender,
         to: RESTAURANT_EMAIL,
-        subject: `[New Reservation] #${reservation.confirmationCode} - ${reservation.guestName} (${reservation.partySize} guests) on ${dateNice} @ ${timeNice}`,
+        subject: `[New Reservation] #${reservation.confirmationCode} - ${reservation.guestName} (${reservation.partySize}p) on ${dateNice} @ ${timeNice}`,
         html: restaurantHtml
-      })
-    );
+      });
 
-    // Send to Customer if email provided
-    if (reservation.email && reservation.email.includes('@')) {
-      promises.push(
-        transporter.sendMail({
-          from: `"${restaurantName}" <${GMAIL_USER}>`,
+      // Send to customer if provided
+      if (reservation.email && reservation.email.includes('@')) {
+        await resend.emails.send({
+          from: fromSender,
           to: reservation.email,
           subject: `Your Reservation Confirmation #${reservation.confirmationCode} - ${restaurantName}`,
           html: customerHtml
-        })
-      );
-    }
+        });
+      }
 
-    try {
-      const results = await Promise.all(promises);
-      console.log(`[Email] Successfully delivered reservation emails for #${reservation.confirmationCode}:`, results.map(r => r.messageId));
-      return { success: true, mode: 'smtp' };
-    } catch (err) {
-      console.error('[Email] SMTP Error when sending via Gmail:', err);
-      return { success: false, error: err.message };
+      console.log(`[Email] Resend API delivered emails for #${reservation.confirmationCode}`);
+      return { success: true, mode: 'resend' };
+    } catch (resendErr) {
+      console.error('[Email] Resend API Error:', resendErr);
     }
-  } else {
-    // No SMTP configured: log clearly to server console
-    console.log(`\n================= [EMAIL CONFIRMATION DISPATCH] =================`);
-    console.log(`To Restaurant: ${RESTAURANT_EMAIL}`);
-    console.log(`To Customer: ${reservation.email || 'None'}`);
-    console.log(`Booking: #${reservation.confirmationCode} - ${reservation.guestName} (${reservation.partySize}p)`);
-    console.log(`Date & Time: ${dateNice} @ ${timeNice}`);
-    console.log(`Table: ${reservation.tableName} (${reservation.zone})`);
-    console.log(`(Configure GMAIL_APP_PASSWORD on Render to deliver live emails directly)`);
-    console.log(`=================================================================\n`);
-    return { success: true, mode: 'simulated' };
   }
+
+  // PRIORITY 2: Gmail SMTP Fallback
+  const pass = process.env.GMAIL_APP_PASSWORD || GMAIL_APP_PASSWORD;
+  const user = process.env.GMAIL_USER || GMAIL_USER;
+  if (pass) {
+    try {
+      const cleanPass = pass.replace(/\s+/g, '').replace(/["']/g, '');
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: user.trim(),
+          pass: cleanPass
+        },
+        connectionTimeout: 8000,
+        greetingTimeout: 8000
+      });
+
+      const promises = [
+        transporter.sendMail({
+          from: `"${restaurantName}" <${user}>`,
+          to: RESTAURANT_EMAIL,
+          subject: `[New Reservation] #${reservation.confirmationCode} - ${reservation.guestName} on ${dateNice}`,
+          html: restaurantHtml
+        })
+      ];
+
+      if (reservation.email && reservation.email.includes('@')) {
+        promises.push(
+          transporter.sendMail({
+            from: `"${restaurantName}" <${user}>`,
+            to: reservation.email,
+            subject: `Your Reservation Confirmation #${reservation.confirmationCode} - ${restaurantName}`,
+            html: customerHtml
+          })
+        );
+      }
+
+      await Promise.all(promises);
+      console.log(`[Email] Gmail SMTP delivered emails for #${reservation.confirmationCode}`);
+      return { success: true, mode: 'smtp' };
+    } catch (smtpErr) {
+      console.error('[Email] Gmail SMTP Error:', smtpErr.message);
+    }
+  }
+
+  console.log(`[Email] Simulated: #${reservation.confirmationCode} to ${reservation.email} & ${RESTAURANT_EMAIL}`);
+  return { success: true, mode: 'simulated' };
 }
 
 module.exports = {
