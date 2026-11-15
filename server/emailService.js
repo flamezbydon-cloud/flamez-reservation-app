@@ -159,24 +159,28 @@ async function sendBookingConfirmationEmail(reservation) {
   if (resendKey) {
     try {
       const resend = new Resend(resendKey.trim());
-      const fromSender = process.env.RESEND_FROM || 'Flamez by Don <onboarding@resend.dev>';
+      const fromSender = process.env.RESEND_FROM || 'Flamez by Don <reservations@flamezbydon.com>';
+
+      console.log(`[Email] Attempting Resend dispatch from: ${fromSender}`);
 
       // Send to restaurant
-      await resend.emails.send({
+      const restaurantResult = await resend.emails.send({
         from: fromSender,
         to: RESTAURANT_EMAIL,
         subject: `[New Reservation] #${reservation.confirmationCode} - ${reservation.guestName} (${reservation.partySize}p) on ${dateNice} @ ${timeNice}`,
         html: restaurantHtml
       });
+      console.log('[Email] Restaurant notification result:', restaurantResult);
 
       // Send to customer if provided
       if (reservation.email && reservation.email.includes('@')) {
-        await resend.emails.send({
+        const customerResult = await resend.emails.send({
           from: fromSender,
           to: reservation.email,
           subject: `Your Reservation Confirmation #${reservation.confirmationCode} - ${restaurantName}`,
           html: customerHtml
         });
+        console.log('[Email] Customer confirmation result:', customerResult);
       }
 
       console.log(`[Email] Resend API delivered emails for #${reservation.confirmationCode}`);
